@@ -1,0 +1,4 @@
+= Asmtests =
+
+This repository will hold a number of tests and examples of assembly code for
+the x86 and x86-64 architectures.
