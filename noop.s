@@ -1,0 +1,2 @@
+.global noop
+noop:	ret
