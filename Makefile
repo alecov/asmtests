@@ -1,2 +1,2 @@
-all: noop.o
+all: noop.o xatoll.o
 clean:; $(RM) *.o
