@@ -1,2 +1,3 @@
-all: noop.o xatoll.o c_xatoll.o
-clean:; $(RM) *.o
+all: test_xatoll
+clean:; $(RM) *.o test_xatoll
+test_xatoll: xatoll.o c_xatoll.o
