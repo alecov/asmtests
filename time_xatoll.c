@@ -59,7 +59,7 @@ int main(int argc, char* argv[]) {
 	clock_gettime(CLOCK_MONOTONIC, &clock2);
 	printf("\t%lli ns\n", timespec_diff(clock1, clock2));
 
-	if (argc <= 2)
+	if (argc < 2)
 		return EXIT_SUCCESS;
 
 	puts("arg atoll(): ");
