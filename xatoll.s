@@ -100,7 +100,7 @@ xatoll:
 	js .Lxatoll_ret                # Bail out if the character is below '0'.
 	cmpb $9, %cl                   # Test if the character is above '9',
 	jg 1f                          #  and, if so, jump to the 'A-F' code.
-	testq %r10, %rdi               # Overflow if %rdi > 0x7FFFFFFFFFFFFFFF.
+	testq %r10, %rdi               # Overflow if %rdi > 0x07FFFFFFFFFFFFFF.
 	jnz .Lxatoll_ret
 	shlq $4, %rdi
 	addq %rcx, %rdi
@@ -112,7 +112,7 @@ xatoll:
 	js .Lxatoll_ret                # Bail out if the character is below 'a'.
 	cmpb $5, %cl                   # Test if the character is above 'f',
 	jg .Lxatoll_ret                #  and, if so, bail out.
-	testq %r10, %rdi               # Overflow if %rdi > 0x7FFFFFFFFFFFFFFF.
+	testq %r10, %rdi               # Overflow if %rdi > 0x07FFFFFFFFFFFFFF.
 	jnz .Lxatoll_ret
 	shlq $4, %rdi
 	addb $10, %cl
