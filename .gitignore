@@ -1,3 +1,5 @@
 *.o
 test_xatoll
+test_xatoull
 time_xatoll
+time_xatoull
