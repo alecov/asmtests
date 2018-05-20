@@ -2,3 +2,12 @@
 
 This repository will hold a number of tests and examples of assembly code for
 the x86 and x86-64 architectures.
+
+== Building ==
+
+Any code published here should compile and run in modern Linux systems just by
+running `make`.
+
+On occasion code could be portable enough (no system calls or other system
+dependent functionality) in order for you to run on your Windows box, for
+example.
