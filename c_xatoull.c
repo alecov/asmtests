@@ -23,6 +23,8 @@ const char* c_xatoull(const char* string, unsigned long long* value) {
 			*value |= next;
 			++string;
 		}
+	while (*string == '0')
+		++string;
 	for (;;) {
 		signed char next = *string - '0';
 #ifdef CXATOULL_OVERFLOW

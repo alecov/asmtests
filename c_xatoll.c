@@ -30,6 +30,8 @@ const char* c_xatoll(const char* string, long long* value) {
 			*value |= next;
 			++string;
 		}
+	while (*string == '0')
+		++string;
 	for (;;) {
 		signed char next = *string - '0';
 #ifdef CXATOLL_OVERFLOW
