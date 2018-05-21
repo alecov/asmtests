@@ -48,10 +48,9 @@ xatoull:
 	jg .Lxatoull_ret               #  and, if so, bail out.
 	movq %rdi, %r10                # Use %r10 as a temporary.
 	leaq (%r10, %r10, 8), %r11     # This is %r11 = 9*%r10.
-	addq %r11, %r10                # Overflow if %rdx > 1844674407370955161.
-	jo .Lxatoull_ret
-	addq %rcx, %r10                # Overflow if %rdx >= 18446744073709551610
-	jo .Lxatoull_ret               #  and %cl >= 6.
+	addq %r11, %r10                # Overflow if %rdx >=18446744073709551610
+	addq %rcx, %r10                #  and %cl >= 6.
+	js .Lxatoull_ret
 	movq %r10, %rdi
 	incq %rax
 	jmp .Lxatoull_ret
