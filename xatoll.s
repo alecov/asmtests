@@ -28,11 +28,19 @@ xatoll:
 	# Test if the string begins with "0x".
 2:	cmpb $'0', %cl
 	jne .Lxatoll_dec
-	leaq 1(%rax), %r8
-	movb (%r8), %r11b
-	orb $0x20, %r11b               # Convert 'X' to 'x'.
-	cmpb $'x', %r11b
+	incq %rax
+	movzxb (%rax), %rcx
+	orb $0x20, %cl                 # Convert 'X' to 'x'.
+	cmpb $'x', %cl
 	je .Lxatoll_hex
+
+	# Skip an arbitrary sized prefix of '0's.
+1:	cmpb $'0', %cl
+	jne 2f
+	incq %rax
+	movzxb (%rax), %rcx
+	jmp 1b
+2:
 
 .Lxatoll_dec:
 	# A signed 64-bit number can have up to 19 decimal digits.
@@ -67,6 +75,14 @@ xatoll:
 	# Skip the "0x" part.
 	addq $2, %rax
 	movzxb (%rax), %rcx
+
+	# Skip an arbitrary sized prefix of '0's.
+1:	cmpb $'0', %cl
+	jne 2f
+	incq %rax
+	movzxb (%rax), %rcx
+	jmp 1b
+2:
 
 	# A signed 64-bit number can have up to 16 hexadecimal digits.
 	# For up to 15 digits, an unrolled loop code can be repeated.
