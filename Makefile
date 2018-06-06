@@ -1,4 +1,4 @@
-all=test_xatoll time_xatoll test_xatoull time_xatoull
+all=test_xatoll time_xatoll test_xatoull time_xatoull time_loop
 all: $(all)
 clean:; $(RM) *.o $(all)
 test_xatoll: xatoll.o c_xatoll.o
