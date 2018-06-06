@@ -30,5 +30,17 @@ int main(void) {
 	__asm__ volatile("1: decl %%ecx\njnz 1b\n" :: "c"(-1));
 	clock_gettime(CLOCK_MONOTONIC, &clock2);
 	printf("\t%lli ms\n", timespec_diff(clock1, clock2));
+
+	puts("test + jz + dec + jmp: ");
+	clock_gettime(CLOCK_MONOTONIC, &clock1);
+	__asm__ volatile("1: test %%ecx, %%ecx\njz 1f\ndecl %%ecx\njmp 1b\n1:\n" :: "c"(-1));
+	clock_gettime(CLOCK_MONOTONIC, &clock2);
+	printf("\t%lli ms\n", timespec_diff(clock1, clock2));
+
+	puts("jcxz + dec + jmp: ");
+	clock_gettime(CLOCK_MONOTONIC, &clock1);
+	__asm__ volatile("1: jecxz 1f\ndecl %%ecx\njmp 1b\n1:\n" :: "c"(-1));
+	clock_gettime(CLOCK_MONOTONIC, &clock2);
+	printf("\t%lli ms\n", timespec_diff(clock1, clock2));
 	return EXIT_SUCCESS;
 }
