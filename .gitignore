@@ -3,3 +3,4 @@ test_xatoll
 test_xatoull
 time_xatoll
 time_xatoull
+time_loop
