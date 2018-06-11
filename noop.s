@@ -1,3 +1,3 @@
 .global noop
-noop:	ret
+noop:	retq
 .section .note.GNU-stack

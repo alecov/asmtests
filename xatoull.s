@@ -57,7 +57,7 @@ xatoull:
 
 .Lxatoull_dec_ret:
 	movq %rdi, (%rsi)
-	ret
+	retq
 
 .Lxatoull_hex:
 	# Skip the "0x" part.
@@ -125,7 +125,7 @@ xatoull:
 
 .Lxatoull_hex_ret:
 	movq %rdi, (%rsi)
-	ret
+	retq
 
 # Mark a non-executable stack for GNU ld.
 .section .note.GNU-stack

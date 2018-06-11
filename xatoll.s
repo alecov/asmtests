@@ -74,7 +74,7 @@ xatoll:
 	jz 1f
 	negq %rdi
 1:	movq %rdi, (%rsi)
-	ret
+	retq
 
 .Lxatoll_hex:
 	# Skip the "0x" part.
@@ -145,7 +145,7 @@ xatoll:
 	jz 1f
 	negq %rdi
 1:	movq %rdi, (%rsi)
-	ret
+	retq
 
 # Mark a non-executable stack for GNU ld.
 .section .note.GNU-stack
