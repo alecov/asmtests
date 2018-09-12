@@ -50,8 +50,8 @@ xatoll:
 	cmpb $9, %cl                   # Test if the character is outside the
 	ja .Lxatoll_dec_ret            #  '0-9' range and, if so, bail out.
 	leaq (%rdi, %rdi, 4), %r11
-	leaq (%rcx, %r11, 2), %rdi
 	incq %rax
+	leaq (%rcx, %r11, 2), %rdi
 	movzxb (%rax), %ecx
 	.endr
 
@@ -64,8 +64,8 @@ xatoll:
 	addq %r11, %r10                # Overflow if %rdx >= 9223372036854775800
 	addq %rcx, %r10                #  and %cl >= 8.
 	js .Lxatoll_dec_ret
-	movq %r10, %rdi
 	incq %rax
+	movq %r10, %rdi
 
 .Lxatoll_dec_ret:
 	testl %edx, %edx               # Negate the result if needed.
@@ -94,8 +94,8 @@ xatoll:
 	cmpb $9, %cl                   # Test if the character is outside the
 	ja 1f                          #  '0-9' range.
 	shlq $4, %rdi
-	addq %rcx, %rdi
 	incq %rax
+	addq %rcx, %rdi
 	movzxb (%rax), %ecx
 	jmp 2f
 
@@ -105,8 +105,8 @@ xatoll:
 	ja .Lxatoll_hex_ret            #  'a-f' range.
 	shlq $4, %rdi
 	addl $10, %ecx
-	addq %rcx, %rdi
 	incq %rax
+	addq %rcx, %rdi
 	movzxb (%rax), %ecx
 2:
 	.endr
@@ -119,8 +119,8 @@ xatoll:
 	testq %r10, %rdi               # Overflow if %rdi > 0x07FFFFFFFFFFFFFF.
 	jnz .Lxatoll_hex_ret
 	shlq $4, %rdi
-	addq %rcx, %rdi
 	incq %rax
+	addq %rcx, %rdi
 	jmp .Lxatoll_hex_ret
 
 1:	orl $0x20, %ecx                # Make 'A-F' into 'a-f'.
@@ -131,8 +131,8 @@ xatoll:
 	jnz .Lxatoll_hex_ret
 	shlq $4, %rdi
 	addl $10, %ecx
-	addq %rcx, %rdi
 	incq %rax
+	addq %rcx, %rdi
 
 .Lxatoll_hex_ret:
 	testl %edx, %edx               # Negate the result if needed.
