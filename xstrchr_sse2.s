@@ -16,7 +16,7 @@ xstrchr_sse2:
 	#pshufb %xmm5, %xmm4
 
 	# Test for paragraph alignment.
-	testb $0x0F, %dil
+	testq $0xF, %rdi
 	jz .Lxstrchr_loop2
 
 	# Unaligned pointer; do the first iteration using an unaligned load.
@@ -37,7 +37,7 @@ xstrchr_sse2:
 
 	# If nothing was found, skip 16 bytes, realign the pointer and continue.
 1:	addq $0x10, %rdi
-	andb $0xF0, %dil
+	andq $-0x10, %rdi
 	jmp .Lxstrchr_loop2
 
 .align 16
