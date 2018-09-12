@@ -47,9 +47,8 @@ xatoll:
 	# For up to 18 digits, an unrolled loop code can be repeated.
 	.rept 18
 1:	subl $'0', %ecx                # Subtract '0' (0x30) from the character.
-	js .Lxatoll_dec_ret            # Bail out if the character is below '0'.
-	cmpb $9, %cl                   # Test if the character is above '9',
-	jg .Lxatoll_dec_ret            #  and, if so, bail out.
+	cmpb $9, %cl                   # Test if the character is outside the
+	ja .Lxatoll_dec_ret            #  '0-9' range and, if so, bail out.
 	leaq (%rdi, %rdi, 4), %r11
 	leaq (%rcx, %r11, 2), %rdi
 	incq %rax
@@ -58,9 +57,8 @@ xatoll:
 
 	# For the last digit, overflow checks are added.
 	subl $'0', %ecx                # Subtract '0' (0x30) from the character.
-	js .Lxatoll_dec_ret            # Bail out if the character is below '0'.
-	cmpb $9, %cl                   # Test if the character is above '9',
-	jg .Lxatoll_dec_ret            #  and, if so, bail out.
+	cmpb $9, %cl                   # Test if the character is outside the
+	ja .Lxatoll_dec_ret            #  '0-9' range and, if so, bail out.
 	movq %rdi, %r10                # Use %r10 as a temporary.
 	leaq (%r10, %r10, 8), %r11     # This is %r11 = 9*%r10.
 	addq %r11, %r10                # Overflow if %rdx >= 9223372036854775800
@@ -93,9 +91,8 @@ xatoll:
 	# For up to 15 digits, an unrolled loop code can be repeated.
 	.rept 15
 	subl $'0', %ecx                # Subtract '0' (0x30) from the character.
-	js .Lxatoll_hex_ret            # Bail out if the character is below '0'.
-	cmpb $9, %cl                   # Test if the character is above '9',
-	jg 1f                          #  and, if so, jump to the 'A-F' code.
+	cmpb $9, %cl                   # Test if the character is outside the
+	ja 1f                          #  '0-9' range.
 	shlq $4, %rdi
 	addq %rcx, %rdi
 	incq %rax
@@ -104,9 +101,8 @@ xatoll:
 
 1:	orl $0x20, %ecx                # Make 'A-F' into 'a-f'.
 	subl $49, %ecx                 # Subtract 49 ('a' - '0').
-	js .Lxatoll_hex_ret            # Bail out if the character is below 'a'.
-	cmpb $5, %cl                   # Test if the character is above 'f',
-	jg .Lxatoll_hex_ret            #  and, if so, bail out.
+	cmpb $5, %cl                   # Test if the character is outside the
+	ja .Lxatoll_hex_ret            #  'a-f' range.
 	shlq $4, %rdi
 	addl $10, %ecx
 	addq %rcx, %rdi
@@ -118,9 +114,8 @@ xatoll:
 	# For the last digit, overflow checks are added.
 	movabsq $0xF800000000000000, %r10
 	subl $'0', %ecx                # Subtract '0' (0x30) from the character.
-	js .Lxatoll_hex_ret            # Bail out if the character is below '0'.
-	cmpb $9, %cl                   # Test if the character is above '9',
-	jg 1f                          #  and, if so, jump to the 'A-F' code.
+	cmpb $9, %cl                   # Test if the character is outside the
+	ja 1f                          #  '0-9' range.
 	testq %r10, %rdi               # Overflow if %rdi > 0x07FFFFFFFFFFFFFF.
 	jnz .Lxatoll_hex_ret
 	shlq $4, %rdi
@@ -130,9 +125,8 @@ xatoll:
 
 1:	orl $0x20, %ecx                # Make 'A-F' into 'a-f'.
 	subl $49, %ecx                 # Subtract 49 ('a' - '0').
-	js .Lxatoll_hex_ret            # Bail out if the character is below 'a'.
-	cmpb $5, %cl                   # Test if the character is above 'f',
-	jg .Lxatoll_hex_ret            #  and, if so, bail out.
+	cmpb $5, %cl                   # Test if the character is outside the
+	ja .Lxatoll_hex_ret            #  'a-f' range.
 	testq %r10, %rdi               # Overflow if %rdi > 0x07FFFFFFFFFFFFFF.
 	jnz .Lxatoll_hex_ret
 	shlq $4, %rdi
