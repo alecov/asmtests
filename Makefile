@@ -7,7 +7,8 @@ all := \
 	time_xatoll \
 	time_xatoull \
 	time_xstrchr \
-	time_loop
+	time_loop \
+	time_mov
 
 .PHONY: all clean
 all: $(all)
@@ -20,6 +21,7 @@ time_xatoll: xatoll.o c_xatoll.o tdiff.o noop.o
 time_xatoull: xatoull.o c_xatoull.o tdiff.o noop.o
 time_xstrchr: xstrchr.o xstrchr_lods.o c_xstrchr.o tdiff.o noop.o
 time_loop: tdiff.o
+time_mov: tdiff.o
 
 ifneq "$(CPU_SSE2)" ""
 test_xstrchr: xstrchr_sse2.o
