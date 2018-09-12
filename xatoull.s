@@ -5,16 +5,16 @@
 xatoull:
 	# Initialize registers.
 	movq %rdi, %rax                # String remainder.
-	xorq %rdi, %rdi                # Parse result.
+	xorl %edi, %edi                # Parse result.
 
 	# Load first character.
-	movzxb (%rax), %rcx
+	movzxb (%rax), %ecx
 
 	# Test if the string begins with "0x".
 2:	cmpb $'0', %cl
 	jne .Lxatoull_dec
 	incq %rax
-	movzxb (%rax), %rcx
+	movzxb (%rax), %ecx
 	orb $0x20, %cl                 # Convert 'X' to 'x'.
 	cmpb $'x', %cl
 	je .Lxatoull_hex
@@ -23,7 +23,7 @@ xatoull:
 1:	cmpb $'0', %cl
 	jne 2f
 	incq %rax
-	movzxb (%rax), %rcx
+	movzxb (%rax), %ecx
 	jmp 1b
 2:
 
@@ -38,7 +38,7 @@ xatoull:
 	leaq (%rdi, %rdi, 4), %r11
 	leaq (%rcx, %r11, 2), %rdi
 	incq %rax
-	movzxb (%rax), %rcx
+	movzxb (%rax), %ecx
 	.endr
 
 	# For the last digit, overflow checks are added.
@@ -62,13 +62,13 @@ xatoull:
 .Lxatoull_hex:
 	# Skip the "0x" part.
 	incq %rax
-	movzxb (%rax), %rcx
+	movzxb (%rax), %ecx
 
-	# Skip an arbitrary sized prefix of '0's.
+	# Skip an arbitrarily sized prefix of '0's.
 1:	cmpb $'0', %cl
 	jne 2f
 	incq %rax
-	movzxb (%rax), %rcx
+	movzxb (%rax), %ecx
 	jmp 1b
 2:
 
@@ -82,7 +82,7 @@ xatoull:
 	shlq $4, %rdi
 	addq %rcx, %rdi
 	incq %rax
-	movzxb (%rax), %rcx
+	movzxb (%rax), %ecx
 	jmp 2f
 
 1:	orb $0x20, %cl                 # Make 'A-F' into 'a-f'.
@@ -94,7 +94,7 @@ xatoull:
 	addb $10, %cl
 	addq %rcx, %rdi
 	incq %rax
-	movzxb (%rax), %rcx
+	movzxb (%rax), %ecx
 2:
 	.endr
 
