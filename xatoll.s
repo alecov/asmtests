@@ -6,7 +6,7 @@ xatoll:
 	# Initialize registers.
 	movq %rdi, %rax                # String remainder.
 	xorl %edi, %edi                # Parse result.
-	xorb %dl, %dl                  # Sign flag (1: negative).
+	xorl %edx, %edx                # Sign flag (1: negative).
 
 	# Load first character.
 	movzxb (%rax), %ecx
@@ -23,14 +23,14 @@ xatoll:
 	jne 2f
 	incq %rax
 	movzxb (%rax), %ecx
-	incb %dl
+	incl %edx
 
 	# Test if the string begins with "0x".
 2:	cmpb $'0', %cl
 	jne .Lxatoll_dec
 	incq %rax
 	movzxb (%rax), %ecx
-	orb $0x20, %cl                 # Convert 'X' to 'x'.
+	orl $0x20, %ecx                # Convert 'X' to 'x'.
 	cmpb $'x', %cl
 	je .Lxatoll_hex
 
@@ -46,7 +46,7 @@ xatoll:
 	# A signed 64-bit number can have up to 19 decimal digits.
 	# For up to 18 digits, an unrolled loop code can be repeated.
 	.rept 18
-1:	subb $'0', %cl                 # Subtract '0' (0x30) from the character.
+1:	subl $'0', %ecx                # Subtract '0' (0x30) from the character.
 	js .Lxatoll_dec_ret            # Bail out if the character is below '0'.
 	cmpb $9, %cl                   # Test if the character is above '9',
 	jg .Lxatoll_dec_ret            #  and, if so, bail out.
@@ -57,7 +57,7 @@ xatoll:
 	.endr
 
 	# For the last digit, overflow checks are added.
-	subb $'0', %cl                 # Subtract '0' (0x30) from the character.
+	subl $'0', %ecx                # Subtract '0' (0x30) from the character.
 	js .Lxatoll_dec_ret            # Bail out if the character is below '0'.
 	cmpb $9, %cl                   # Test if the character is above '9',
 	jg .Lxatoll_dec_ret            #  and, if so, bail out.
@@ -70,7 +70,7 @@ xatoll:
 	incq %rax
 
 .Lxatoll_dec_ret:
-	testb %dl, %dl                 # Negate the result if needed.
+	testl %edx, %edx               # Negate the result if needed.
 	jz 1f
 	negq %rdi
 1:	movq %rdi, (%rsi)
@@ -92,7 +92,7 @@ xatoll:
 	# A signed 64-bit number can have up to 16 hexadecimal digits.
 	# For up to 15 digits, an unrolled loop code can be repeated.
 	.rept 15
-	subb $'0', %cl                 # Subtract '0' (0x30) from the character.
+	subl $'0', %ecx                # Subtract '0' (0x30) from the character.
 	js .Lxatoll_hex_ret            # Bail out if the character is below '0'.
 	cmpb $9, %cl                   # Test if the character is above '9',
 	jg 1f                          #  and, if so, jump to the 'A-F' code.
@@ -102,13 +102,13 @@ xatoll:
 	movzxb (%rax), %ecx
 	jmp 2f
 
-1:	orb $0x20, %cl                 # Make 'A-F' into 'a-f'.
-	subb $49, %cl                  # Subtract 49 ('a' - '0').
+1:	orl $0x20, %ecx                # Make 'A-F' into 'a-f'.
+	subl $49, %ecx                 # Subtract 49 ('a' - '0').
 	js .Lxatoll_hex_ret            # Bail out if the character is below 'a'.
 	cmpb $5, %cl                   # Test if the character is above 'f',
 	jg .Lxatoll_hex_ret            #  and, if so, bail out.
 	shlq $4, %rdi
-	addb $10, %cl
+	addl $10, %ecx
 	addq %rcx, %rdi
 	incq %rax
 	movzxb (%rax), %ecx
@@ -117,7 +117,7 @@ xatoll:
 
 	# For the last digit, overflow checks are added.
 	movabsq $0xF800000000000000, %r10
-	subb $'0', %cl                 # Subtract '0' (0x30) from the character.
+	subl $'0', %ecx                # Subtract '0' (0x30) from the character.
 	js .Lxatoll_hex_ret            # Bail out if the character is below '0'.
 	cmpb $9, %cl                   # Test if the character is above '9',
 	jg 1f                          #  and, if so, jump to the 'A-F' code.
@@ -128,20 +128,20 @@ xatoll:
 	incq %rax
 	jmp .Lxatoll_hex_ret
 
-1:	orb $0x20, %cl                 # Make 'A-F' into 'a-f'.
-	subb $49, %cl                  # Subtract 49 ('a' - '0').
+1:	orl $0x20, %ecx                # Make 'A-F' into 'a-f'.
+	subl $49, %ecx                 # Subtract 49 ('a' - '0').
 	js .Lxatoll_hex_ret            # Bail out if the character is below 'a'.
 	cmpb $5, %cl                   # Test if the character is above 'f',
 	jg .Lxatoll_hex_ret            #  and, if so, bail out.
 	testq %r10, %rdi               # Overflow if %rdi > 0x07FFFFFFFFFFFFFF.
 	jnz .Lxatoll_hex_ret
 	shlq $4, %rdi
-	addb $10, %cl
+	addl $10, %ecx
 	addq %rcx, %rdi
 	incq %rax
 
 .Lxatoll_hex_ret:
-	testb %dl, %dl                 # Negate the result if needed.
+	testl %edx, %edx               # Negate the result if needed.
 	jz 1f
 	negq %rdi
 1:	movq %rdi, (%rsi)

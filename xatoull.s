@@ -15,7 +15,7 @@ xatoull:
 	jne .Lxatoull_dec
 	incq %rax
 	movzxb (%rax), %ecx
-	orb $0x20, %cl                 # Convert 'X' to 'x'.
+	orl $0x20, %ecx                # Convert 'X' to 'x'.
 	cmpb $'x', %cl
 	je .Lxatoull_hex
 
@@ -31,7 +31,7 @@ xatoull:
 	# An unsigned 64-bit number can have up to 20 decimal digits.
 	# For up to 19 digits, an unrolled loop code can be repeated.
 	.rept 19
-1:	subb $'0', %cl                 # Subtract '0' (0x30) from the character.
+1:	subl $'0', %ecx                # Subtract '0' (0x30) from the character.
 	js .Lxatoull_dec_ret           # Bail out if the character is below '0'.
 	cmpb $9, %cl                   # Test if the character is above '9',
 	jg .Lxatoull_dec_ret           #  and, if so, bail out.
@@ -42,7 +42,7 @@ xatoull:
 	.endr
 
 	# For the last digit, overflow checks are added.
-	subb $'0', %cl                 # Subtract '0' (0x30) from the character.
+	subl $'0', %ecx                # Subtract '0' (0x30) from the character.
 	js .Lxatoull_dec_ret           # Bail out if the character is below '0'.
 	cmpb $9, %cl                   # Test if the character is above '9',
 	jg .Lxatoull_dec_ret           #  and, if so, bail out.
@@ -75,7 +75,7 @@ xatoull:
 	# An unsigned 64-bit number can have up to 16 hexadecimal digits.
 	# For up to 15 digits, an unrolled loop code can be repeated.
 	.rept 15
-	subb $'0', %cl                 # Subtract '0' (0x30) from the character.
+	subl $'0', %ecx                # Subtract '0' (0x30) from the character.
 	js .Lxatoull_hex_ret           # Bail out if the character is below '0'.
 	cmpb $9, %cl                   # Test if the character is above '9',
 	jg 1f                          #  and, if so, jump to the 'A-F' code.
@@ -85,13 +85,13 @@ xatoull:
 	movzxb (%rax), %ecx
 	jmp 2f
 
-1:	orb $0x20, %cl                 # Make 'A-F' into 'a-f'.
-	subb $49, %cl                  # Subtract 49 ('a' - '0').
+1:	orl $0x20, %ecx                # Make 'A-F' into 'a-f'.
+	subl $49, %ecx                 # Subtract 49 ('a' - '0').
 	js .Lxatoull_hex_ret           # Bail out if the character is below 'a'.
 	cmpb $5, %cl                   # Test if the character is above 'f',
 	jg .Lxatoull_hex_ret           #  and, if so, bail out.
 	shlq $4, %rdi
-	addb $10, %cl
+	addl $10, %ecx
 	addq %rcx, %rdi
 	incq %rax
 	movzxb (%rax), %ecx
@@ -100,7 +100,7 @@ xatoull:
 
 	# For the last digit, overflow checks are added.
 	movabsq $0xF000000000000000, %r10
-	subb $'0', %cl                 # Subtract '0' (0x30) from the character.
+	subl $'0', %ecx                # Subtract '0' (0x30) from the character.
 	js .Lxatoull_hex_ret           # Bail out if the character is below '0'.
 	cmpb $9, %cl                   # Test if the character is above '9',
 	jg 1f                          #  and, if so, jump to the 'A-F' code.
@@ -111,15 +111,15 @@ xatoull:
 	incq %rax
 	jmp .Lxatoull_hex_ret
 
-1:	orb $0x20, %cl                 # Make 'A-F' into 'a-f'.
-	subb $49, %cl                  # Subtract 49 ('a' - '0').
+1:	orl $0x20, %ecx                # Make 'A-F' into 'a-f'.
+	subl $49, %ecx                 # Subtract 49 ('a' - '0').
 	js .Lxatoull_hex_ret           # Bail out if the character is below 'a'.
 	cmpb $5, %cl                   # Test if the character is above 'f',
 	jg .Lxatoull_hex_ret           #  and, if so, bail out.
 	testq %r10, %rdi               # Overflow if %rdi > 0x0FFFFFFFFFFFFFFF.
 	jnz .Lxatoull_hex_ret
 	shlq $4, %rdi
-	addb $10, %cl
+	addl $10, %ecx
 	addq %rcx, %rdi
 	incq %rax
 
