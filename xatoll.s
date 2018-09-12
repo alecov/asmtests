@@ -34,7 +34,7 @@ xatoll:
 	cmpb $'x', %cl
 	je .Lxatoll_hex
 
-	# Skip an arbitrary sized prefix of '0's.
+	# Skip an arbitrarily sized prefix of '0's.
 1:	cmpb $'0', %cl
 	jne 2f
 	incq %rax
@@ -78,7 +78,7 @@ xatoll:
 
 .Lxatoll_hex:
 	# Skip the "0x" part.
-	addq $2, %rax
+	incq %rax
 	movzxb (%rax), %rcx
 
 	# Skip an arbitrary sized prefix of '0's.
