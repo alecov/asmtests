@@ -1,4 +1,6 @@
-all = \
+CPU_SSE2 = $(shell grep sse2 /proc/cpuinfo)
+
+all := \
 	test_xatoll \
 	test_xatoull \
 	test_xstrchr \
@@ -6,12 +8,20 @@ all = \
 	time_xatoull \
 	time_xstrchr \
 	time_loop
+
+.PHONY: all clean
 all: $(all)
 clean:; $(RM) *.o $(all)
+
 test_xatoll: xatoll.o c_xatoll.o
 test_xatoull: xatoull.o c_xatoull.o
-test_xstrchr: xstrchr.o xstrchr_sse2.o c_xstrchr.o
+test_xstrchr: xstrchr.o xstrchr_lods.o c_xstrchr.o
 time_xatoll: xatoll.o c_xatoll.o tdiff.o noop.o
 time_xatoull: xatoull.o c_xatoull.o tdiff.o noop.o
-time_xstrchr: xstrchr.o xstrchr_sse2.o c_xstrchr.o tdiff.o noop.o
+time_xstrchr: xstrchr.o xstrchr_lods.o c_xstrchr.o tdiff.o noop.o
 time_loop: tdiff.o
+
+ifneq "$(CPU_SSE2)" ""
+test_xstrchr: xstrchr_sse2.o
+time_xstrchr: xstrchr_sse2.o
+endif

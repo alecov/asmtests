@@ -12,8 +12,6 @@ int main(int argc, char* argv[]) {
 	struct timespec clock1, clock2;
 	unsigned int count;
 
-	(void)argc;
-
 	puts("string strtoull():");
 	clock_gettime(CLOCK_MONOTONIC, &clock1);
 	for (count = 0; count < 10000000; ++count)
